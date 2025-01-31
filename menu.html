@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cobblestones Cafe</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.min.js"></script>
+
+
+    <!-- CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.css" />
+    <link href="css/style.css" rel="stylesheet" type="text/css" media="all" /> 
+    <!-- CSS -->
+
+    <!-- FONTS -->
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Exo:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <!-- FONTS -->
+  </head>
+  <body>
+
+    <!-- Header -->
+    <header class="header">
+      <nav class="navbar navbar-expand-lg">
+        <div class="container">
+          <a class="navbar-brand" href="/">
+            <img src="images/logo.jpeg" width="200" alt="logo" />
+          </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav d-flex align-items-center justify-content-end w-100">
+              <li class="nav-item">
+                <a class="nav-link" href="index.html">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="menu.html">Menu</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="contact.html">Contact</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>      
+    </header>
+    <!-- Header -->
+
+    <!-- Banner -->
+    <section class="section-inner-banner">
+      <div class="container">
+        <h1 class="text-center">Menu</h1>
+      </div>
+    </section>
+    <!-- Banner -->
+<!-- PDF Container -->
+<div id="pdf-container" class="container my-4"></div>
+<p id="error-message" class="text-center text-danger fw-bold" style="display: none;">
+    ⚠ The menu could not be loaded. Please check back later.
+</p>
+
+<script>
+    const url = 'menu.pdf';
+
+    pdfjsLib.getDocument(url).promise
+        .then(pdf => {
+            const container = document.getElementById("pdf-container");
+
+            for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                pdf.getPage(pageNum).then(page => {
+                    const scale = 1.5; // Adjust scale as needed
+                    const viewport = page.getViewport({ scale });
+
+                    // Create a wrapper div
+                    const pageWrapper = document.createElement("div");
+                    pageWrapper.classList.add("pdf-page", "text-center", "mb-4"); // Add some Bootstrap styling
+
+                    // Create a heading for page number
+                    const pageTitle = document.createElement("h5");
+                    pageTitle.innerText = `Page ${pageNum}`;
+                    pageTitle.classList.add("text-center", "mb-2");
+
+                    // Create a canvas element for the page
+                    const canvas = document.createElement("canvas");
+                    canvas.width = viewport.width;
+                    canvas.height = viewport.height;
+
+                    // Append elements to container
+                    pageWrapper.appendChild(pageTitle);
+                    pageWrapper.appendChild(canvas);
+                    container.appendChild(pageWrapper);
+
+                    // Render the page
+                    const context = canvas.getContext("2d");
+                    page.render({ canvasContext: context, viewport: viewport });
+                });
+            }
+        })
+        .catch(error => {
+            console.error("Error loading PDF:", error);
+            document.getElementById("error-message").style.display = "block"; // Show error message
+        });
+</script>
+
+
+    
+
+    </body>
