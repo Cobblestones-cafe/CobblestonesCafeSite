@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Cobblestones Cafe</title>
+    <link rel="icon" type="image/png" href="images/logo.png">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.min.js"></script>
 
@@ -65,46 +66,65 @@
 </p>
 
 <script>
-    const url = 'menu.pdf'; <!-- Add menu pdf name here if new needed -->
+    const url = 'menu.pdf'; // PDF file path
 
-    pdfjsLib.getDocument(url).promise
-        .then(pdf => {
-            const container = document.getElementById("pdf-container");
+    function renderPDF(scaleFactor) {
+        pdfjsLib.getDocument(url).promise
+            .then(pdf => {
+                const container = document.getElementById("pdf-container");
+                container.innerHTML = ""; // Clear previous renders
 
-            for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-                pdf.getPage(pageNum).then(page => {
-                    const scale = 1.5; // Adjust scale as needed
-                    const viewport = page.getViewport({ scale });
+                for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                    pdf.getPage(pageNum).then(page => {
+                        const viewport = page.getViewport({ scale: scaleFactor });
 
-                    // Create a wrapper div
-                    const pageWrapper = document.createElement("div");
-                    pageWrapper.classList.add("pdf-page", "text-center", "mb-4"); // Add some Bootstrap styling
+                        // Create a wrapper div
+                        const pageWrapper = document.createElement("div");
+                        pageWrapper.classList.add("pdf-page", "text-center", "mb-4");
 
-                    // Create a heading for page number
-                    const pageTitle = document.createElement("h5");
-                    pageTitle.innerText = `Page ${pageNum}`;
-                    pageTitle.classList.add("text-center", "mb-2");
+                        // Create a heading for page number
+                        const pageTitle = document.createElement("h5");
+                        pageTitle.innerText = `Page ${pageNum}`;
+                        pageTitle.classList.add("text-center", "mb-2");
 
-                    // Create a canvas element for the page
-                    const canvas = document.createElement("canvas");
-                    canvas.width = viewport.width;
-                    canvas.height = viewport.height;
+                        // Create a canvas element for the page
+                        const canvas = document.createElement("canvas");
+                        canvas.width = viewport.width;
+                        canvas.height = viewport.height;
 
-                    // Append elements to container
-                    pageWrapper.appendChild(pageTitle);
-                    pageWrapper.appendChild(canvas);
-                    container.appendChild(pageWrapper);
+                        // Append elements to container
+                        pageWrapper.appendChild(pageTitle);
+                        pageWrapper.appendChild(canvas);
+                        container.appendChild(pageWrapper);
 
-                    // Render the page
-                    const context = canvas.getContext("2d");
-                    page.render({ canvasContext: context, viewport: viewport });
-                });
-            }
-        })
-        .catch(error => {
-            console.error("Error loading PDF:", error);
-            document.getElementById("error-message").style.display = "block"; // Show error message
-        });
+                        // Render the page
+                        const context = canvas.getContext("2d");
+                        page.render({ canvasContext: context, viewport: viewport });
+                    });
+                }
+            })
+            .catch(error => {
+                console.error("Error loading PDF:", error);
+                document.getElementById("error-message").style.display = "block"; // Show error message
+            });
+    }
+
+    // Function to determine scale based on screen width
+    function getScaleFactor() {
+        if (window.innerWidth < 480) return 0.6; // Small mobile screens
+        if (window.innerWidth < 768) return 0.8; // Tablets
+        return 1.5; // Default for larger screens
+    }
+
+    // Initial render
+    renderPDF(getScaleFactor());
+
+    // Re-render on resize
+    window.addEventListener("resize", () => {
+        renderPDF(getScaleFactor());
+    });
 </script>
+
+<!-- PDF container -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     </body>
