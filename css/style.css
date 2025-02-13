@@ -284,6 +284,7 @@ h2:after{
     background: #000;
     padding: 24px 0;
     color: #fff;
+    margin-top: auto;
 }
 /*Footer*/
 
@@ -335,4 +336,38 @@ h2:after{
         width: 100%!important;
         height: 400px!important;
     }
+}
+
+.error {
+    color: red;
+    font-weight: bold;
+    background-color: #fdd;
+    border: 1px solid red;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+}
+.error a {
+    color: rgb(255, 255, 255);
+    text-decoration: none;
+}
+.btn {
+    background-color: #454544;
+    color: #000;
+}
+.btn:hover {
+    background-color: #8e8e8e;
+    color: #000;
+}
+.stickyfeet {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+.wrapper {
+    display: flex;
+    flex-direction: column;
+}
+.content {
+    flex-grow: 1;
 }
